@@ -1,171 +1,254 @@
-package View;
+package view;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import Controller.AplicationController;
-import Model.Contact;
+import model.Contact;
+import controller.ApplicationController;
+/**
+ * 
+ * @author Sanela
+ *
+ */
 
 public class ApplicationView extends Main {
 
-	public static void home(Contact c) {
-
+	/**
+	 * Prikaz glavnog menija - JPanel
+	 */
+	public static void home() {
 		JPanel content = new JPanel();
-		JLabel greating = new JLabel("Welcome to BitBook");
+		
+		JLabel greeting = new JLabel("Welcome to BitBook");
+		Font greetingFont = new Font("SansSerif", Font.BOLD, 30);
+		greeting.setFont(greetingFont);
+		content.add(greeting);
 
-		content.add(greating);
-		JButton showContact = new JButton("Show Contacts");
-		showContact.addActionListener(new ActionListener() {
-
+		JButton showContacts = new JButton("Show Contacts");
+		/**
+		 * Anonimna klasa koja treba da prikaze sve kontakte u Phonebooku
+		 */
+		showContacts.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AplicationController.list();
-
+				/** poziva metodu iz klase ApplicationController
+				koja poziva metodu list(iz ove klase i salje joj niz COntacts)
+				*/
+				ApplicationController.list();
 			}
+
 		});
 
 		JButton addContact = new JButton("Add Contact");
-
 		addContact.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AplicationController.addContact();
-
+				/** poziva metodu addContact iz ApplicationControllera 
+				koja poziva metodu add iz ove klase*/
+				ApplicationController.addContact();
 			}
 		});
 
-		content.add(showContact);
 		content.add(addContact);
-
-		Main.replacePanel(content);
-
+		content.add(showContacts);
+		replaceContent(content);
 	}
 
+	/**
+	 * Meni za dodavanje novih kontakata
+	 */
 	public static void addContact() {
 
 		JPanel content = new JPanel();
-		JLabel name = new JLabel("Name");
-		final JTextField nameFild = new JTextField(20);
-		JLabel surname = new JLabel("Surname");
-		final JTextField surnameFild = new JTextField(20);
-		JLabel number = new JLabel("Number");
-		JTextField numberFild = new JTextField(20);
-		JButton save = new JButton("Save");
-		JButton back = new JButton("Backe");
-		
-		save.addActionListener(new ActionListener() {
-			
+		content.setLayout(new FlowLayout());
+		JLabel nameL = new JLabel("Name: ");
+		final JTextField nameF = new JTextField(25);
+		content.add(nameL);
+		content.add(nameF);
+
+		JLabel surnameL = new JLabel("Surname: ");
+		final JTextField surnameF = new JTextField(25);
+		content.add(surnameL);
+		content.add(surnameF);
+
+		JLabel numberL = new JLabel("Number: ");
+		final JTextField numberF = new JTextField(25);
+		content.add(numberL);
+		content.add(numberF);
+
+		JButton submit = new JButton("Add");
+		submit.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				/*
-				 * Get the data from input
-				 * and send it to the create method
+				 * Kupi podatke koji su uneseni i salje ih u
+				 * metodu create iz klase ApplicationController
 				 */
-				String cName = nameFild.getText();
-				String cSurname = surnameFild.getText();
-				String cNumber = nameFild.getText();
-			AplicationController.create(cName, cSurname, cNumber);
-
+				String cName = nameF.getText();
+				String cSurname = surnameF.getText();
+				String cNumber = numberF.getText();
+				ApplicationController.create(cName, cSurname, cNumber);
 			}
+
 		});
 
+		JButton back = new JButton("Back");
 		back.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AplicationController.home();
-
+				/**
+				 * Vraca na glavni meni ako pritisnes dugme back
+				 */
+				ApplicationController.home();
 			}
+
 		});
 
-		content.add(name);
-		content.add(nameFild);
-		content.add(surname);
-		content.add(surnameFild);
-		content.add(number);
-		content.add(numberFild);
-		content.add(save);
-		content.add(back);
-		
-		replacePanel(content);
-
+		JPanel buttons = new JPanel();
+		buttons.add(submit);
+		buttons.add(back);
+		content.add(buttons);
+		//lijepi ovaj panel na frame
+		replaceContent(content);
 	}
 
-	public static void list(Contact[] all){
-		int buttonHight = 50;
+	/**
+	 * Pravi listu kontakata koji se ispisuju na maniju
+	 * ima i dva JButtona add i back 
+	 * @param all - prmima niz 
+	 */
+	public static void list(Contact[] all) {
+		
+		int buttonHeight = 50;
 		
 		JPanel content = new JPanel();
+		content.setPreferredSize(new Dimension(ApplicationView.windowWidth - 70, all.length * (buttonHeight + 20)-100));
 		
 		JButton back = new JButton("Back");
-		JButton contact = new JButton("OK");
-		content.add(back);
-		content.add(contact);
-		
 		back.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AplicationController.home();
-				
+				/**
+				 * Vraca nas na glavni meni
+				 */
+				ApplicationController.home();
+			}
+		});
+		JButton addContact = new JButton("Add Contact");
+		addContact.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				/**
+				 * Poziva metodu koja kupi podatke o novom unesenom kontaktu
+				 */
+				ApplicationController.addContact();
 			}
 		});
 		
-		contact.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				
-			}
-		});
-		
-		content.setPreferredSize(new Dimension(ApplicationView.windowWidth-70, all.length * (buttonHight + 20)));
-		
-		if(all.length<1){
-		JLabel greating = new JLabel("You have  no friends");
-		Font msg = new Font("SansSerif", Font.BOLD, 30);
-		greating.setFont(msg);
-		content.add(greating);
+		content.add(back);
+		content.add(addContact);
+
+		/**
+		 * ako je primljeni niz prazan onda nema kontakata u 
+		 * phonebooku i saljemo poruku
+		 */
+		if (all.length < 1) {
+			JLabel message = new JLabel("You have no friends");
+			Font messageFont = new Font("SansSerif", Font.BOLD, 30);
+			message.setFont(messageFont);
+			content.add(message);
 		}
-		//TODO add Add Contact button
+
+		// TODO add Add Contact button
+
 		
 		/**
-		 * kreira dugme za svakog korisnika
-		 * postavlja ime za svaki button
-		 * ima actionlistener
+		 * petlja koja prolayi kroz niz i pravi button za svaki kontakt
 		 */
-		for(int i = 0; i < all.length; i++){
+		for (int i = 0; i < all.length; i++) {
 			JButton current = new JButton(all[i].getDisplayName());
 			current.setName(Integer.toString(all[i].getId()));
-			current.setPreferredSize(new Dimension(ApplicationView.windowWidth-75, buttonHight));
+			current.setPreferredSize(new Dimension(
+					ApplicationView.windowWidth - 75, buttonHeight));
 			current.addActionListener(new ActionListener() {
-				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO redirect to contact
-					JButton clicked = (JButton)(e.getSource());
+					JButton clicked = (JButton) (e.getSource());
 					int id = Integer.parseInt(clicked.getName());
-					System.out.println("Korsnik" + id);
-					
+					ApplicationController.show(id);
+					System.out.println("Korisnik: " + id);
 				}
 			});
-			
 			content.add(current);
 		}
-		
+
 		JScrollPane sp = new JScrollPane(content);
 		sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		replacePanel(sp);
+
+		replaceContent(sp);
 	}
+	
+	public static void show(Contact current) {
+		JPanel content = new JPanel();
+	
+		
+		JLabel name = new JLabel("Name:");
+		Font font = new Font("SansSerif", Font.BOLD, 15);
+		name.setFont(font);
+		JLabel nameW = new JLabel(current.getName());
+		JLabel surname = new JLabel("Surname:");
+		surname.setFont(font);
+		JLabel surnameW = new JLabel(current.getSurname());
+		JLabel number = new JLabel("Number:");
+		number.setFont(font);
+		JLabel numberW = new JLabel(current.getNumber());
+		
+		JButton back = new JButton("Back");
+		JButton edit = new JButton("Edit");
+		
+		
+		content.add(name);
+		content.add(nameW);
+		content.add(surname);
+		content.add(surnameW);
+		content.add(number);
+		content.add(numberW);
+		
+		back.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ApplicationController.home();
+				
+			}
+		});
+		
+		edit.addActionListener(new ActionListener() {
+			//TODO
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		content.add(back);
+		content.add(edit);
+		
+		replaceContent(content);
+	}
+
 }
